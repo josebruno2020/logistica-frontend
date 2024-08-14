@@ -1,13 +1,14 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import url("https://fonts.googleapis.com/css2?family=Montserrat&display=swap");
 
 :root {
-  --color: 240,240, 240;
+  --color: 240, 240, 240;
 }
 
 body {
-  background: rgb(var(--color))
+  background: rgb(var(--color));
 }
 
 @layer utilities {
@@ -16,12 +17,23 @@ body {
   }
 }
 
-.submit {
-  padding: .8rem;
-  border-radius: .4rem;
+.buttons {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.button {
+  padding: 0.8rem;
+  border-radius: 0.4rem;
   background-color: rgb(200, 200, 200);
 }
 
-.submit:hover {
-  background-color: rgba(200, 200, 200, .5);
+.button:hover {
+  background-color: rgba(200, 200, 200, 0.5);
+}
+
+.button:disabled {
+  cursor: not-allowed;
+  background-color: rgba(200, 200, 200, 0.5);
 }

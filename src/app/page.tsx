@@ -2,59 +2,68 @@
 
 import AddressForm from "@/components/home/address-form/address-form";
 import ProductForm from "@/components/home/product-form/product-form";
+import ResultModal from "@/components/home/result-modal/result-modal";
 import PageTitle from "@/components/shared/page-title/page-title";
 import { Address } from "@/models/Address";
 import { Product } from "@/models/Product";
+import { Shipping } from "@/models/Shipping";
+import { ShippingResult } from "@/models/ShippingResult";
 import { ShippingService } from "@/services/shipping.service";
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 
 export default function Home() {
   const shippingService = new ShippingService();
-  const productFormRef = useRef<{ getProductData: () => Product }>(null);
-  const addressFormRef = useRef<{ getAddressData: () => Address }>(null);
-  const deliveryAddressFormRef = useRef<{ getAddressData: () => Address }>(
-    null
-  );
+  const productFormRef = useRef<{
+    getProductData: () => Product;
+    clear: () => void;
+  }>(null);
+  const addressFormRef = useRef<{
+    getAddressData: () => Address;
+    clear: () => void;
+  }>(null);
+  const deliveryAddressFormRef = useRef<{
+    getAddressData: () => Address;
+    clear: () => void;
+  }>(null);
+  const [loading, setLoading] = useState(false);
+  const [isModalOpen, setModalOpen] = useState(true);
+  const [shipping, setShipping] = useState(new Shipping());
+  const [cheaper, setCheaper] = useState(new ShippingResult());
+  const [faster, setFaster] = useState(new ShippingResult());
 
-  const validateProduct = (product: Product): boolean => {
-    const keys = Object.keys(product);
-    return keys.length >= 3;
+  const cleanForm = () => {
+    productFormRef.current?.clear();
+    addressFormRef.current?.clear();
+    deliveryAddressFormRef.current?.clear();
   };
 
-  const validateAddress = (address: Address): boolean => {
-    const addressKeys = Object.keys(address);
-    console.log(addressKeys);
-    return addressKeys.length >= 6;
-  };
-
-  const handleSubmit = async (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleSubmit = async (event: React.SyntheticEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setLoading(true);
 
     const product = productFormRef.current?.getProductData();
     const collectionAddress = addressFormRef.current?.getAddressData();
     const deliveryAddress = deliveryAddressFormRef.current?.getAddressData();
-    console.log({ product, collectionAddress, deliveryAddress });
 
     if (!product || !collectionAddress || !deliveryAddress) {
       alert("preencha as informações obrigatórias");
       return;
     }
 
-    if (!validateProduct(product)) {
-      alert("Preencha todas as informações de produto!");
-      return;
-    }
-
-    if (!validateAddress(collectionAddress)) {
-      alert("Preencha todas as informações do endereço de retirada!");
-      return;
-    }
-
-    await shippingService.create({
+    const { shipping, cheaper, faster } = await shippingService.create({
       product,
       collectionAddress,
       deliveryAddress,
     });
+    setLoading(false);
+    setModalOpen(true);
+    setShipping(shipping);
+    setFaster(faster);
+    setCheaper(cheaper);
+  };
+
+  const closeModal = () => {
+    setModalOpen(false);
   };
 
   return (
@@ -62,7 +71,7 @@ export default function Home() {
       <PageTitle title="Simulador de Frete" />
 
       <div className="w-100-l">
-        <form>
+        <form onSubmit={handleSubmit}>
           <ProductForm ref={productFormRef} />
           <AddressForm title="Endereço de Retirada:" ref={addressFormRef} />
           <AddressForm
@@ -70,11 +79,28 @@ export default function Home() {
             ref={deliveryAddressFormRef}
           />
 
-          <button className="submit mt-5" type="submit" onClick={handleSubmit}>
-            Salvar
-          </button>
+          <div className="buttons">
+            <button className="button mt-5" type="submit" disabled={loading}>
+              {loading ? "Carregando..." : "Salvar"}
+            </button>
+
+            <button className="button mt-5" type="button" onClick={cleanForm}>
+              Limpar
+            </button>
+          </div>
         </form>
       </div>
+
+      {isModalOpen && shipping.id && (
+        <div>
+          <ResultModal
+            cheaper={cheaper}
+            faster={faster}
+            shipping={shipping}
+            onCloseModal={closeModal}
+          />
+        </div>
+      )}
     </main>
   );
 }

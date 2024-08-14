@@ -5,6 +5,6 @@ export class Address {
   neighborhood: string;
   street: string;
   number: string;
-  // lat: number;
-  // long: number;
+  lat: number;
+  long: number;
 }

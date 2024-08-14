@@ -30,6 +30,7 @@ const AddressForm = forwardRef(({ title }: AddressFormProps, ref) => {
 
   useImperativeHandle(ref, () => ({
     getAddressData: () => address,
+    clear: () => setAddress(new Address()),
   }));
   return (
     <div>
@@ -48,30 +49,35 @@ const AddressForm = forwardRef(({ title }: AddressFormProps, ref) => {
           value={address.city}
           name="city"
           onInput={handleAddressInput}
+          isRequired={true}
         />
         <AppInput
           placeholder="Estado"
           value={address.state}
           name="state"
           onInput={handleAddressInput}
+          isRequired={true}
         />
         <AppInput
           placeholder="Bairro"
           value={address.neighborhood}
           name="neighborhood"
           onInput={handleAddressInput}
+          isRequired={true}
         />
         <AppInput
           placeholder="Rua"
           value={address.street}
           name="street"
           onInput={handleAddressInput}
+          isRequired={true}
         />
         <AppInput
           placeholder="Número"
           value={address.number}
           name="number"
           onInput={handleAddressInput}
+          isRequired={true}
         />
       </div>
     </div>

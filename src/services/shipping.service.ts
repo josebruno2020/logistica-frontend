@@ -1,11 +1,19 @@
 import { Address } from "@/models/Address";
 import { Product } from "@/models/Product";
+import { Shipping } from "@/models/Shipping";
+import { ShippingResult } from "@/models/ShippingResult";
 import { HttpService } from "./http.service";
 
 export interface ShippingCreateProps {
   product: Product;
   collectionAddress: Address;
   deliveryAddress: Address;
+}
+
+export class ShippingCreateResponse {
+  shipping: Shipping;
+  cheaper: ShippingResult;
+  faster: ShippingResult;
 }
 
 export class ShippingService {
@@ -19,18 +27,28 @@ export class ShippingService {
     product,
     collectionAddress,
     deliveryAddress,
-  }: ShippingCreateProps): Promise<void> {
+  }: ShippingCreateProps): Promise<ShippingCreateResponse> {
     try {
-      const { body } = await this.httpService.post({
+      const { body } = await this.httpService.post<ShippingCreateResponse>({
         uri: "shippings",
         body: { product, collectionAddress, deliveryAddress },
       });
 
-      console.log(body);
-      alert("Frete simulado com sucesso");
+      return body;
     } catch (err: any) {
       alert(`Nao foi possivel simular o frete: ${err.message}`);
-      console.log(err);
+      throw err;
     }
+  }
+
+  async list(): Promise<ShippingCreateResponse[]> {
+    const { body } = await this.httpService.get<ShippingCreateResponse[]>({
+      uri: "shippings/lasts",
+      headers: {
+        "Content-type": "application/json",
+      },
+    });
+
+    return body;
   }
 }

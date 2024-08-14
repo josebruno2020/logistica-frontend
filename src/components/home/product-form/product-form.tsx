@@ -16,6 +16,7 @@ const ProductForm = forwardRef((props: ProductFormProps, ref) => {
 
   useImperativeHandle(ref, () => ({
     getProductData: () => product,
+    clear: () => setProduct(new Product()),
   }));
 
   return (
