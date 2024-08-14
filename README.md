@@ -4,7 +4,6 @@ Projeto construído para simular custo e prazo de frete entre vários Operadores
 
 ## Requerimentos
 
-- Docker (v25 ou superior)
 - Node (v20)
 - Yarn
 
