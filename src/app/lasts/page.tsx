@@ -13,8 +13,14 @@ export default function Shippings() {
   const shippingService = new ShippingService();
   const [shippings, setShippings] = useState<ShippingCreateResponse[]>([]);
   useEffect(() => {
-    shippingService.list().then((shippings) => setShippings(shippings));
+    shippingService
+      .list()
+      .then((shippings) => setShippings(shippings))
+      .catch((err) => alert("Não foi possivel buscar as informações"));
   }, []);
+  const displayDate = (date: Date | string): string => {
+    return new Date(date).toLocaleString().replace(",", "");
+  };
   return (
     <main className="flex flex-col items-center justify-between p-10">
       <PageTitle title="Últimas simulações" />
@@ -24,7 +30,7 @@ export default function Shippings() {
           return (
             <div key={i} className={styles.shipping}>
               <div className={styles.modalHeader}>
-                <h3>Simulação de Frete</h3>
+                <h3>Simulação de Frete - {displayDate(shipping.createdAt)}</h3>
               </div>
               <ShowShippingResult
                 shipping={shipping}
