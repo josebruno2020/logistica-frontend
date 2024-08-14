@@ -12,20 +12,23 @@ import styles from "./lasts.module.css";
 export default function Shippings() {
   const shippingService = new ShippingService();
   const [shippings, setShippings] = useState<ShippingCreateResponse[]>([]);
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
     shippingService
       .list()
       .then((shippings) => setShippings(shippings))
-      .catch((err) => alert("Não foi possivel buscar as informações"));
+      .catch((err) => alert("Não foi possivel buscar as informações"))
+      .finally(() => setLoading(false));
   }, []);
   const displayDate = (date: Date | string): string => {
     return new Date(date).toLocaleString().replace(",", "");
   };
   return (
-    <main className="flex flex-col items-center justify-between p-10">
+    <main className="flex flex-col items-center justify-between md:p-10">
       <PageTitle title="Últimas simulações" />
 
       <div className="w-100-l">
+        {loading && <p>Carregando...</p>}
         {shippings.map(({ shipping, faster, cheaper }, i) => {
           return (
             <div key={i} className={styles.shipping}>
@@ -36,6 +39,7 @@ export default function Shippings() {
                 shipping={shipping}
                 faster={faster}
                 cheaper={cheaper}
+                showProduct
               />
             </div>
           );
