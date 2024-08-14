@@ -33,6 +33,7 @@ const ProductForm = forwardRef((props: ProductFormProps, ref) => {
         />
         <AppInput
           name="width"
+          type="number"
           value={product.width ?? ""}
           placeholder="Largura em cm"
           onInput={handleInputChange}
@@ -40,6 +41,7 @@ const ProductForm = forwardRef((props: ProductFormProps, ref) => {
         />
         <AppInput
           name="length"
+          type="number"
           value={product.length ?? ""}
           placeholder="Comprimento em cm"
           onInput={handleInputChange}
